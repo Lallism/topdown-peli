@@ -16,6 +16,9 @@ const tileHeight = 32;
 const wallSprite = new Image();
 wallSprite.src = "gfx/wall.png"
 
+const projectileImage = new Image();
+projectileImage.src = "gfx/fireball.png";
+
 const level = [
     "##############################",
     "#............................#",
@@ -77,17 +80,25 @@ function loadLevel(level) {
     }
 }
 
+const projectiles = [];
+
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     movePlayer();
     cameraFollow(player);
-    
+
     for (const wall of walls) {
         ctx.drawImage(wallSprite, wall.x - camera.x, wall.y - camera.y);
     }
+
+    for (const projectile of projectiles) {
+        projectile.update();
+        projectile.draw();
+    }
+
     ctx.drawImage(player.sprite, player.x - camera.x, player.y - camera.y);
-    
+
     window.requestAnimationFrame(update);
 }
 
@@ -144,6 +155,33 @@ function movePlayer() {
     player.y += movY;
 }
 
+class Projectile {
+    constructor(startX, startY, width, height, velocity, image) {
+        this.startX = startX;
+        this.startY = startY;
+        this.x = startX;
+        this.y = startY;
+        this.width = width;
+        this.height = height;
+        this.velocity = velocity;
+        this.image = image;
+    }
+
+    update() {
+        this.x += this.velocity.x;
+        this.y += this.velocity.y;
+    }
+
+    draw() {
+        ctx.save();
+        ctx.translate(this.x - camera.x, this.y - camera.y);
+        const angle = Math.atan2(this.velocity.y, this.velocity.x);
+        ctx.rotate(angle);
+        ctx.drawImage(this.image, -this.width / 2, -this.height / 2, this.width, this.height);
+        ctx.restore();
+    }
+}
+
 function cameraFollow(target) {
     camera.x = target.x - canvas.width / 2;
     camera.y = target.y - canvas.height / 2;
@@ -184,3 +222,33 @@ update();
 
 document.addEventListener("keydown", keyDown);
 document.addEventListener("keyup", keyUp);
+addEventListener("click", (event) => {
+    const targetX = event.clientX - canvas.getBoundingClientRect().left + camera.x;
+    const targetY = event.clientY - canvas.getBoundingClientRect().top + camera.y;
+
+    const deltaX = targetX - (player.x + player.width / 2);
+    const deltaY = targetY - (player.y + player.height / 2);
+
+    const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    const normalizedDirection = {
+        x: deltaX / magnitude,
+        y: deltaY / magnitude,
+    };
+
+    const speed = 5;
+
+    const velocity = {
+        x: normalizedDirection.x * speed,
+        y: normalizedDirection.y * speed,
+    };
+
+    const startX = player.x + player.width / 2;
+    const startY = player.y + player.height / 2;
+
+    const width = 32;
+    const height = 32;
+
+    const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
+    projectiles.push(projectile);
+});
