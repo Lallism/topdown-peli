@@ -1,0 +1,25 @@
+:root {
+    --grey-dark: #3e3546;
+    --grey: #7f708a;
+    --dark: #2e222f;
+}
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--dark);
+}
+
+main {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#canvas {
+    background-color: var(--grey-dark);
+}
