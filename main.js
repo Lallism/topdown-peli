@@ -92,48 +92,50 @@ function update() {
 }
 
 function movePlayer() {
-    let playerTopleft = {x: player.x, y: player.y};
-    let playerTopright = {x: player.x + player.width, y: player.y};
-    let playerBottomleft = {x: player.x, y: player.y + player.height};
-    let playerBottomright = {x: player.x + player.width, y: player.y + player.height};
+    let playerTop = player.y;
+    let playerBottom = player.y + player.height;
+    let playerLeft = player.x;
+    let playerRight = player.x + player.width;
 
     let movX = player.movR - player.movL;
     let movY = player.movD - player.movU;
     for (let i = 0; i < walls.length; i++) {
         const wall = walls[i];
-        let wallTopleft = {x: wall.x, y: wall.y};
-        let wallTopright = {x: wall.x + tileWidth, y: wall.y};
-        let wallBottomleft = {x: wall.x, y: wall.y + tileHeight};
-        let wallBottomright = {x: wall.x + tileWidth, y: wall.y + tileHeight};
-        if (movX > 0 && wall.x <= (player.x + player.width + movX) && (wall.x + tileWidth) >= (player.x + movX)) {
-            if (playerTopright.y <= wallBottomleft.y && playerTopright.y >= wallTopleft.y) {
+
+        let wallTop = wall.y;
+        let wallBottom = wall.y + tileHeight;
+        let wallLeft = wall.x;
+        let wallRight = wall.x + tileWidth;
+
+        if (movX > 0 && wallLeft <= (playerRight + movX) && wallRight >= (playerLeft + movX)) {
+            if (playerTop <= wallBottom && playerTop >= wallTop) {
                 movX = 0;
             }
-            if (playerBottomright.y <= wallBottomleft.y && playerBottomright.y >= wallTopleft.y) {
-                movX = 0;
-            }
-        }
-        else if (movX < 0 && wall.x <= (player.x + player.width + movX) && (wall.x + tileWidth) >= (player.x + movX)) {
-            if (playerTopleft.y <= wallBottomright.y && playerTopleft.y >= wallTopright.y) {
-                movX = 0;
-            }
-            else if (playerBottomleft.y <= wallBottomright.y && playerBottomleft.y >= wallTopright.y) {
+            if (playerBottom <= wallBottom && playerBottom >= wallTop) {
                 movX = 0;
             }
         }
-        if (movY > 0 && wall.y <= (player.y + player.width + movY) && (wall.y + tileWidth) >= (player.y + movY)) {
-            if (playerBottomright.x <= wallTopright.x && playerBottomright.x >= wallTopleft.x) {
+        else if (movX < 0 && wallLeft <= (playerRight + movX) && wallRight >= (playerLeft + movX)) {
+            if (playerTop <= wallBottom && playerTop >= wallTop) {
+                movX = 0;
+            }
+            else if (playerBottom <= wallBottom && playerBottom >= wallTop) {
+                movX = 0;
+            }
+        }
+        if (movY > 0 && wallTop <= (playerBottom + movY) && wallBottom >= (playerTop + movY)) {
+            if (playerRight <= wallRight && playerRight >= wallLeft) {
                 movY = 0;
             }
-            if (playerBottomleft.x <= wallTopright.x && playerBottomleft.x >= wallTopleft.x) {
+            if (playerLeft <= wallRight && playerLeft >= wallLeft) {
                 movY = 0;
             }
         }
-        else if (movY < 0 && wall.y <= (player.y + player.width + movY) && (wall.y + tileWidth) >= (player.y + movY)) {
-            if (playerTopright.x <= wallBottomright.x && playerTopright.x >= wallBottomleft.x) {
+        else if (movY < 0 && wallTop <= (playerBottom + movY) && wallBottom >= (playerTop + movY)) {
+            if (playerRight <= wallRight && playerRight >= wallLeft) {
                 movY = 0;
             }
-            else if (playerTopleft.x <= wallBottomright.x && playerTopleft.x >= wallBottomleft.x) {
+            else if (playerLeft <= wallRight && playerLeft >= wallLeft) {
                 movY = 0;
             }
         }
