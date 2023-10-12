@@ -1,7 +1,8 @@
 class Wall {
-    constructor(x, y) {
+    constructor(x, y, sprite) {
         this.x = x;
         this.y = y;
+        this.sprite = sprite;
     }
 }
 
@@ -13,8 +14,13 @@ playerSprite.src = "gfx/drake_emerald.png";
 
 const tileWidth = 32;
 const tileHeight = 32;
+
 const wallSprite = new Image();
-wallSprite.src = "gfx/wall.png"
+wallSprite.src = "gfx/wall.png";
+const wallSprite2 = new Image();
+wallSprite2.src = "gfx/wall2.png";
+const wallSprite3 = new Image();
+wallSprite3.src = "gfx/wall3.png";
 
 const projectileImage = new Image();
 projectileImage.src = "gfx/fireball.png";
@@ -29,15 +35,15 @@ const level = [
     "#######..####..#.............#",
     "#.....#..#.....#.............#",
     "#.....#..#.....#.............#",
-    "#..#..#..#..####",
-    "#..#..#..#...",
-    "#..#..#..#...",
-    "#..#..#..#..#",
-    "#..#.....#..#",
-    "#..#.....#..#",
-    "#..##########",
-    "#............",
-    "#............",
+    "#..#..#..#..####.............#",
+    "#..#..#..#...................#",
+    "#..#..#..#...................#",
+    "#..#..#..#..#................#",
+    "#..#.....#..#................#",
+    "#..#.....#..#................#",
+    "#..##########................#",
+    "#............................#",
+    "#............................#",
     "##############################"
 ]
 
@@ -70,7 +76,17 @@ function loadLevel(level) {
         for (let j = 0; j < row.length; j++) {
             const char = row[j];
             if (char == "#") {
-                const newWall = new Wall(posX, posY);
+                const randomWall = Math.random();
+                let sprite = wallSprite;
+
+                if (randomWall > 0.98) {
+                    sprite = wallSprite3;
+                }
+                else if (randomWall > 0.5) {
+                    sprite = wallSprite2;
+                }
+
+                const newWall = new Wall(posX, posY, sprite);
                 walls.push(newWall);
             }
             posX += tileWidth;
@@ -89,7 +105,7 @@ function update() {
     cameraFollow(player);
 
     for (const wall of walls) {
-        ctx.drawImage(wallSprite, wall.x - camera.x, wall.y - camera.y);
+        ctx.drawImage(wall.sprite, wall.x - camera.x, wall.y - camera.y);
     }
 
     for (const projectile of projectiles) {
@@ -246,8 +262,8 @@ addEventListener("click", (event) => {
     const startX = player.x + player.width / 2;
     const startY = player.y + player.height / 2;
 
-    const width = 32;
-    const height = 32;
+    const width = 25;
+    const height = 14;
 
     const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
     projectiles.push(projectile);
