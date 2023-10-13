@@ -99,17 +99,49 @@ function loadLevel(level) {
 
 const projectiles = [];
 
+function checkCollision(obj1, obj2) {
+    return (
+        obj1.x + obj1.width > obj2.x + 6 &&
+        obj1.x < obj2.x + obj2.width + 5 &&
+        obj1.y + obj1.height > obj2.y + 3 &&
+        obj1.y < obj2.y + obj2.height + 5
+    );
+}
+
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     cameraFollow(player);
-    
+
     for (const object of objects) {
+        if (object.tag === "enemy") {
+            if (checkCollision(player, object)) {
+                const enemyIndex = objects.indexOf(object);
+                if (enemyIndex !== -1) {
+                    objects.splice(enemyIndex, 1);
+                }                
+            }
+        }
+
         object.draw(ctx, camera);
         object.update();
     }
 
     for (const projectile of projectiles) {
+        for (const object of objects) {
+            if (object.tag === "enemy" && checkCollision(projectile, object)) {
+                const enemyIndex = objects.indexOf(object);
+                if (enemyIndex !== -1) {
+                    objects.splice(enemyIndex, 1);
+                }
+
+                const projectileIndex = projectiles.indexOf(projectile);
+                if (projectileIndex !== -1) {
+                    projectiles.splice(projectileIndex, 1);
+                }
+            }
+        }
+
         projectile.update();
         projectile.draw();
     }
