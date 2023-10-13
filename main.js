@@ -93,8 +93,31 @@ function update() {
         projectile.update();
         projectile.draw();
     }
-
+    checkProjectileWallCollision();
     window.requestAnimationFrame(update);
+}
+
+function checkProjectileWallCollision() {
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+        const projectile = projectiles[i];
+        for (let j = 0; j < objects.length; j++) {
+            const wall = objects[j];
+
+            if (wall.tag != "wall") {
+                continue;
+            }
+
+            if (
+                projectile.x + projectile.width > wall.x + 12 &&
+                projectile.x < wall.x + tileWidth + 10 &&
+                projectile.y + projectile.height > wall.y + 5 &&
+                projectile.y < wall.y + tileHeight + 10
+            ) {
+                projectiles.splice(i, 1);
+                break;
+            }
+        }
+    }
 }
 
 class Projectile {
@@ -135,19 +158,15 @@ update();
 addEventListener("click", (event) => {
     const targetX = event.clientX - canvas.getBoundingClientRect().left + camera.x;
     const targetY = event.clientY - canvas.getBoundingClientRect().top + camera.y;
-
     const deltaX = targetX - (player.x + player.width / 2);
     const deltaY = targetY - (player.y + player.height / 2);
-
     const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
     const normalizedDirection = {
         x: deltaX / magnitude,
         y: deltaY / magnitude,
     };
 
     const speed = 5;
-
     const velocity = {
         x: normalizedDirection.x * speed,
         y: normalizedDirection.y * speed,
@@ -155,10 +174,8 @@ addEventListener("click", (event) => {
 
     const startX = player.x + player.width / 2;
     const startY = player.y + player.height / 2;
-
     const width = 25;
     const height = 14;
-
     const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
     projectiles.push(projectile);
 });
