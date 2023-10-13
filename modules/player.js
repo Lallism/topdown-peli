@@ -100,36 +100,6 @@ class Player extends Object {
         this.x += movX;
         this.y += movY;
     }
-
-/*    keyDown(e) {
-        if (e.key === "ArrowRight" || e.key === "Right") {
-            this.movR = this.speed;
-        }
-        else if (e.key === "ArrowLeft" || e.key === "Left") {
-            this.movL = this.speed;
-        }
-        else if (e.key === "ArrowUp" || e.key === "Up") {
-            this.movU = this.speed;
-        }
-        else if (e.key === "ArrowDown" || e.key === "Down") {
-            this.movD = this.speed;
-        }
-    }
-
-    keyUp(e) {
-        if (e.key === "ArrowRight" || e.key === "Right") {
-            this.movR = 0;
-        }
-        else if (e.key === "ArrowLeft" || e.key === "Left") {
-            this.movL = 0;
-        }
-        else if (e.key === "ArrowUp" || e.key === "Up") {
-            this.movU = 0;
-        }
-        else if (e.key === "ArrowDown" || e.key === "Down") {
-            this.movD = 0;
-        }
-    } */
 }
 
 export { Player };
