@@ -1,4 +1,5 @@
 import { Object, objects } from "./modules/object.js";
+import { Enemy } from "./modules/enemy.js";
 import { Player } from "./modules/player.js";
 
 const canvas = document.getElementById("canvas");
@@ -6,6 +7,9 @@ const ctx = canvas.getContext("2d");
 
 const playerSprite = new Image();
 playerSprite.src = "gfx/drake_emerald.png";
+
+const enemySprite = new Image();
+enemySprite.src = "gfx/frostfly.png";
 
 const tileWidth = 32;
 const tileHeight = 32;
@@ -21,28 +25,44 @@ const projectileImage = new Image();
 projectileImage.src = "gfx/fireball.png";
 
 const level = [
-    "##############################",
-    "#............................#",
-    "#............................#",
-    "#..########################..#",
-    "#............................#",
-    "#............................#",
-    "#######..####..#.............#",
-    "#.....#..#.....#.............#",
-    "#.....#..#.....#.............#",
-    "#..#..#..#..####.............#",
-    "#..#..#..#...................#",
-    "#..#..#..#...................#",
-    "#..#..#..#..#................#",
-    "#..#.....#..#................#",
-    "#..#.....#..#................#",
-    "#..##########................#",
-    "#............................#",
-    "#............................#",
-    "##############################"
+    "####################################",
+    "#################..#################",
+    "#################..#################",
+    "###..............................###",
+    "###..............................###",
+    "###..............................###",
+    "###...#...#...#......#...#...#...###",
+    "###..............................###",
+    "###..............................###",
+    "###..............................###",
+    "###...#......................#...###",
+    "###..............................###",
+    "###..............................###",
+    "#..................................#",
+    "#..................................#",
+    "###..............................###",
+    "###..............................###",
+    "###...#......................#...###",
+    "###..............................###",
+    "###..............................###",
+    "###..............................###",
+    "###...#...#...#......#...#...#...###",
+    "###..............................###",
+    "###..............................###",
+    "###..............................###",
+    "#################..#################",
+    "#################..#################",
+    "####################################"
 ]
 
-const player = new Player("player", 48, 48, 32, 32, playerSprite, 2);
+const spawners = [
+    {x: 560, y: 48},
+    {x: 48, y: 432},
+    {x: 1072, y: 432},
+    {x: 560, y: 784}
+]
+
+const player = new Player("player", 560, 432, 32, 32, playerSprite, 2);
 
 const camera = {
     x: 0,
@@ -68,7 +88,7 @@ function loadLevel(level) {
                     sprite = wallSprite2;
                 }
 
-                const newWall = new Object("wall", posX, posY, tileHeight, tileWidth, sprite);
+                new Object("wall", posX, posY, tileHeight, tileWidth, sprite);
             }
             posX += tileWidth;
         }
@@ -95,6 +115,14 @@ function update() {
     }
     checkProjectileWallCollision();
     window.requestAnimationFrame(update);
+}
+
+function spawnEnemies() {
+    for (const spawner of spawners) {
+        new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemySprite, 1, player);
+    }
+
+    setTimeout(spawnEnemies, 10000)
 }
 
 function checkProjectileWallCollision() {
@@ -148,12 +176,13 @@ class Projectile {
 }
 
 function cameraFollow(target) {
-    camera.x = target.x - canvas.width / 2;
-    camera.y = target.y - canvas.height / 2;
+    camera.x = target.x + target.width / 2 - canvas.width / 2;
+    camera.y = target.y + target.width / 2 - canvas.height / 2;
 }
 
 loadLevel(level);
 update();
+setTimeout(spawnEnemies, 5000)
 
 addEventListener("click", (event) => {
     const targetX = event.clientX - canvas.getBoundingClientRect().left + camera.x;
