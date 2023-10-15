@@ -1,10 +1,12 @@
 import { Object, objects } from "./object.js";
 
 class Enemy extends Object {
-    constructor (tag, x, y, height, width, sprite, speed, target) {
+    constructor (tag, x, y, height, width, sprite, speed, target, health) {
         super(tag, x, y, height, width, sprite);
         this.speed = speed;
         this.target = target;
+        this.health = health;
+        this.damage = 1
     }
 
     update() {

@@ -116,9 +116,13 @@ function update() {
     for (const object of objects) {
         if (object.tag === "enemy") {
             if (checkCollision(player, object)) {
+                player.health -= object.damage
                 const enemyIndex = objects.indexOf(object);
                 if (enemyIndex !== -1) {
                     objects.splice(enemyIndex, 1);
+                }
+                if (player.health <= 0) {
+                    console.log("player is dead") // Väliaikainen testi, pelin loppu...
                 }                
             }
         }
@@ -130,11 +134,13 @@ function update() {
     for (const projectile of projectiles) {
         for (const object of objects) {
             if (object.tag === "enemy" && checkCollision(projectile, object)) {
-                const enemyIndex = objects.indexOf(object);
-                if (enemyIndex !== -1) {
-                    objects.splice(enemyIndex, 1);
+                object.health -= player.damage
+                if (object.health <= 0) {
+                    const enemyIndex = objects.indexOf(object);
+                    if (enemyIndex !== -1) {
+                        objects.splice(enemyIndex, 1);
+                    }
                 }
-
                 const projectileIndex = projectiles.indexOf(projectile);
                 if (projectileIndex !== -1) {
                     projectiles.splice(projectileIndex, 1);
@@ -151,7 +157,7 @@ function update() {
 
 function spawnEnemies() {
     for (const spawner of spawners) {
-        new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemySprite, 1, player);
+        new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemySprite, 1, player, 3);
     }
 
     setTimeout(spawnEnemies, 10000)
