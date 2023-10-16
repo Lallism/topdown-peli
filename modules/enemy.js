@@ -173,6 +173,9 @@ class RangedEnemy extends Enemy {
     }
 
     shoot(self) {
+        if (self.health <= 0) {
+            return;
+        }
         const deltaX = (self.target.x + self.target.width / 2) - (self.x + self.width / 2);
         const deltaY = (self.target.y + self.target.height / 2) - (self.y + self.height / 2);
         const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
