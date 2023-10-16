@@ -99,17 +99,55 @@ function loadLevel(level) {
 
 const projectiles = [];
 
+function checkCollision(obj1, obj2) {
+    return (
+        obj1.x + obj1.width > obj2.x + 6 &&
+        obj1.x < obj2.x + obj2.width + 5 &&
+        obj1.y + obj1.height > obj2.y + 3 &&
+        obj1.y < obj2.y + obj2.height + 5
+    );
+}
+
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     cameraFollow(player);
-    
+
     for (const object of objects) {
+        if (object.tag === "enemy") {
+            if (checkCollision(player, object)) {
+                player.health -= object.damage
+                const enemyIndex = objects.indexOf(object);
+                if (enemyIndex !== -1) {
+                    objects.splice(enemyIndex, 1);
+                }
+                if (player.health <= 0) {
+                    console.log("player is dead") // Väliaikainen testi, pelin loppu...
+                }                
+            }
+        }
+
         object.draw(ctx, camera);
         object.update();
     }
 
     for (const projectile of projectiles) {
+        for (const object of objects) {
+            if (object.tag === "enemy" && checkCollision(projectile, object)) {
+                object.health -= player.damage
+                if (object.health <= 0) {
+                    const enemyIndex = objects.indexOf(object);
+                    if (enemyIndex !== -1) {
+                        objects.splice(enemyIndex, 1);
+                    }
+                }
+                const projectileIndex = projectiles.indexOf(projectile);
+                if (projectileIndex !== -1) {
+                    projectiles.splice(projectileIndex, 1);
+                }
+            }
+        }
+
         projectile.update();
         projectile.draw();
     }
@@ -119,7 +157,7 @@ function update() {
 
 function spawnEnemies() {
     for (const spawner of spawners) {
-        new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemySprite, 1, player);
+        new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemySprite, 1, player, 3);
     }
 
     setTimeout(spawnEnemies, 10000)
@@ -189,69 +227,71 @@ let shootingInterval;
 let targetX, targetY;
 
 canvas.addEventListener("mousedown", (event) => {
-    canShoot = true;
-    updateTarget(event);
+    if (event.button === 0) {
+        canShoot = true;
+        updateTarget(event);
 
-    const deltaX = targetX - (player.x + player.width / 2);
-    const deltaY = targetY - (player.y + player.height / 2);
-    const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    const normalizedDirection = {
-        x: deltaX / magnitude,
-        y: deltaY / magnitude,
-    };
+        const deltaX = targetX - (player.x + player.width / 2);
+        const deltaY = targetY - (player.y + player.height / 2);
+        const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const normalizedDirection = {
+            x: deltaX / magnitude,
+            y: deltaY / magnitude,
+        };
 
-    const speed = 5;
-    const velocity = {
-        x: normalizedDirection.x * speed,
-        y: normalizedDirection.y * speed,
-    };
+        const speed = 5;
+        const velocity = {
+            x: normalizedDirection.x * speed,
+            y: normalizedDirection.y * speed,
+        };
 
-    const startX = player.x + player.width / 2;
-    const startY = player.y + player.height / 2;
-    const width = 25;
-    const height = 14;
-    const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
-    projectiles.push(projectile);    
+        const startX = player.x + player.width / 2;
+        const startY = player.y + player.height / 2;
+        const width = 25;
+        const height = 14;
+        const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
+        projectiles.push(projectile);
 
-    shootingInterval = setInterval(() => {
-        if (canShoot) {
-            const deltaX = targetX - (player.x + player.width / 2);
-            const deltaY = targetY - (player.y + player.height / 2);
-            const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            const normalizedDirection = {
-                x: deltaX / magnitude,
-                y: deltaY / magnitude,
-            };
+        shootingInterval = setInterval(() => {
+            if (canShoot) {
+                const deltaX = targetX - (player.x + player.width / 2);
+                const deltaY = targetY - (player.y + player.height / 2);
+                const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                const normalizedDirection = {
+                    x: deltaX / magnitude,
+                    y: deltaY / magnitude,
+                };
 
-            const speed = 5;
-            const velocity = {
-                x: normalizedDirection.x * speed,
-                y: normalizedDirection.y * speed,
-            };
+                const speed = 5;
+                const velocity = {
+                    x: normalizedDirection.x * speed,
+                    y: normalizedDirection.y * speed,
+                };
 
-            const startX = player.x + player.width / 2;
-            const startY = player.y + player.height / 2;
-            const width = 25;
-            const height = 14;
-            const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
-            projectiles.push(projectile);
-        }
-    }, 150);
+                const startX = player.x + player.width / 2;
+                const startY = player.y + player.height / 2;
+                const width = 25;
+                const height = 14;
+                const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
+                projectiles.push(projectile);
+            }
+        }, 150);
 
-    canvas.addEventListener("mousemove", updateTarget);
+        canvas.addEventListener("mousemove", updateTarget);
 
-    canvas.addEventListener("mouseup", () => {
-        canShoot = false;
-        clearInterval(shootingInterval);
-        canvas.removeEventListener("mousemove", updateTarget);
-    });
-
-    function updateTarget(event) {
-        targetX = event.clientX - canvas.getBoundingClientRect().left + camera.x;
-        targetY = event.clientY - canvas.getBoundingClientRect().top + camera.y;
+        canvas.addEventListener("mouseup", () => {
+            canShoot = false;
+            clearInterval(shootingInterval);
+            canvas.removeEventListener("mousemove", updateTarget);
+        });
     }
 });
 
 canvas.addEventListener("contextmenu", (event) => {
     event.preventDefault();
 });
+
+function updateTarget(event) {
+    targetX = event.clientX - canvas.getBoundingClientRect().left + camera.x;
+    targetY = event.clientY - canvas.getBoundingClientRect().top + camera.y;
+}
