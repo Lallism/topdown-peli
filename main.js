@@ -14,6 +14,9 @@ butterflySprite.src = "gfx/frostfly.png";
 const snailSprite = new Image();
 snailSprite.src = "gfx/slugflora.png";
 
+const catSprite = new Image();
+catSprite.src = "gfx/sparkit.png";
+
 const tileWidth = 32;
 const tileHeight = 32;
 
@@ -67,7 +70,8 @@ const spawners = [
 
 const enemyData = [
     {sprite: butterflySprite, speed: 1, health: 5, minDifficulty: 0, spawnChance: 10},
-    {sprite: snailSprite, speed: 0.5, health: 20, minDifficulty: 5, spawnChance: 1}
+    {sprite: snailSprite, speed: 0.5, health: 20, minDifficulty: 5, spawnChance: 1},
+    {sprite: catSprite, speed: 3, health: 2, minDifficulty: 10, spawnChance: 1}
 ]
 
 const player = new Player("player", 560, 432, 32, 32, playerSprite, 2);
