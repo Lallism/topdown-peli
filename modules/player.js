@@ -10,6 +10,7 @@ class Player extends Object {
         this.speed = speed;
         this.damage = 1
         this.health = 5
+        this.maxHealth = 5
 
         document.addEventListener("keydown", (e) => {
             if (e.key === "ArrowRight" || e.key === "Right") {
