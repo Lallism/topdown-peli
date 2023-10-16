@@ -75,18 +75,19 @@ const spawners = [
 ]
 
 const enemyData = [
-    {sprite: butterflySprite, speed: 1, health: 5, range: 0, minDifficulty: 0, spawnChance: 10},
-    {sprite: snailSprite, speed: 0.5, health: 20, range: 0, minDifficulty: 5, spawnChance: 1},
-    {sprite: shellSprite, speed: 1, health: 5, range: 160, projectile: blueFireballSprite, projectileSpeed: 3, attackDelay: 2000, minDifficulty: 10, spawnChance: 5},
-    {sprite: catSprite, speed: 3, health: 2, range: 0, minDifficulty: 20, spawnChance: 1}
+    {sprite: butterflySprite, speed: 1, health: 5, range: 0, minDifficulty: 0, spawnChance: 10, score: 1},
+    {sprite: snailSprite, speed: 0.5, health: 20, range: 0, minDifficulty: 5, spawnChance: 1, score: 2},
+    {sprite: shellSprite, speed: 1, health: 5, range: 160, projectile: blueFireballSprite, projectileSpeed: 3, attackDelay: 2000, minDifficulty: 10, spawnChance: 5, score: 3},
+    {sprite: catSprite, speed: 3, health: 2, range: 0, minDifficulty: 20, spawnChance: 1, score: 4}
 ]
 
 const player = new Player("player", 560, 432, 32, 32, playerSprite, 2);
 
 const barX = 15;
 const barY = 15;
-const barHeight = 10
+const barHeight = 10;
 let healthBarWidth = (player.health * 10) * player.maxHealth;
+let playerScore = 0;
 
 const camera = {
     x: 0,
@@ -135,7 +136,7 @@ function checkCollision(obj1, obj2) {
 function update() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    cameraFollow(player);
+    cameraFollow(player); 
 
     for (const object of objects) {
         if (object.tag === "enemy") {
@@ -163,6 +164,7 @@ function update() {
                     const enemyIndex = objects.indexOf(object);
                     if (enemyIndex !== -1) {
                         objects.splice(enemyIndex, 1);
+                        playerScore += object.score
                     }
                 }
                 const projectileIndex = projectiles.indexOf(projectile);
@@ -190,6 +192,11 @@ function update() {
     if (player.health >= 0) {
         healthBarWidth = (player.health * 10) * player.maxHealth;
     }
+    
+    ctx.fillStyle = 'white';
+    ctx.font = '20px Arial';
+    ctx.fillText('Score: ' + playerScore, canvas.width - 100, 30);   
+
     checkProjectileWallCollision();
     window.requestAnimationFrame(update);
 }
@@ -217,10 +224,10 @@ function spawnEnemies() {
         const enemy = enemyData[spawn];
 
         if (enemy.range > 0) {
-            new RangedEnemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health, enemy.range, enemy.projectile, enemy.projectileSpeed, enemy.attackDelay);
+            new RangedEnemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health, enemy.range, enemy.projectile, enemy.projectileSpeed, enemy.attackDelay, enemy.score);
         }
         else {
-            new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health);
+            new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health, enemy.score);
         }
     }
 

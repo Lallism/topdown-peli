@@ -2,12 +2,13 @@ import { Object, objects } from "./object.js";
 import { Projectile, projectiles } from "./projectile.js";
 
 class Enemy extends Object {
-    constructor (tag, x, y, height, width, sprite, speed, target, health) {
+    constructor (tag, x, y, height, width, sprite, speed, target, health, score) {
         super(tag, x, y, height, width, sprite);
         this.speed = speed;
         this.target = target;
         this.health = health;
         this.damage = 1
+        this.score = score
     }
 
     update() {
@@ -83,13 +84,14 @@ class Enemy extends Object {
 }
 
 class RangedEnemy extends Enemy {
-    constructor(tag, x, y, height, width, sprite, speed, target, health, range, projectile, projectileSpeed, attackDelay) {
+    constructor(tag, x, y, height, width, sprite, speed, target, health, range, projectile, projectileSpeed, attackDelay, score) {
         super(tag, x, y, height, width, sprite, speed, target, health);
         this.range = range;
         this.projectile = projectile;
         this.projectileSpeed = projectileSpeed;
         this.attackDelay = attackDelay;
         this.canShoot = true;
+        this.score = score
     }
 
     update() {
