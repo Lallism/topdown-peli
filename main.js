@@ -76,6 +76,11 @@ const enemyData = [
 
 const player = new Player("player", 560, 432, 32, 32, playerSprite, 2);
 
+const barX = 15;
+const barY = 15;
+const barHeight = 10
+let healthBarWidth = (player.health * 10) * player.maxHealth;
+
 const camera = {
     x: 0,
     y: 0
@@ -164,6 +169,21 @@ function update() {
 
         projectile.update();
         projectile.draw();
+    }
+
+    const gradient = ctx.createLinearGradient(barX, barY, barX + healthBarWidth, barY);
+    gradient.addColorStop(0, "#ffffff");
+    gradient.addColorStop(1, 'red');
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(barX, barY, healthBarWidth, barHeight);
+
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(barX - 1, barY - 1, healthBarWidth + 2, barHeight + 2);
+
+    if (player.health >= 0) {
+        healthBarWidth = (player.health * 10) * player.maxHealth;
     }
     checkProjectileWallCollision();
     window.requestAnimationFrame(update);
