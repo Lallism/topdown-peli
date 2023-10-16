@@ -8,8 +8,11 @@ const ctx = canvas.getContext("2d");
 const playerSprite = new Image();
 playerSprite.src = "gfx/drake_emerald.png";
 
-const enemySprite = new Image();
-enemySprite.src = "gfx/frostfly.png";
+const butterflySprite = new Image();
+butterflySprite.src = "gfx/frostfly.png";
+
+const snailSprite = new Image();
+snailSprite.src = "gfx/slugflora.png";
 
 const tileWidth = 32;
 const tileHeight = 32;
@@ -62,12 +65,19 @@ const spawners = [
     {x: 560, y: 784}
 ]
 
+const enemyData = [
+    {sprite: butterflySprite, speed: 1, health: 5, minDifficulty: 0, spawnChance: 10},
+    {sprite: snailSprite, speed: 0.5, health: 20, minDifficulty: 5, spawnChance: 1}
+]
+
 const player = new Player("player", 560, 432, 32, 32, playerSprite, 2);
 
 const camera = {
     x: 0,
     y: 0
 }
+
+let difficulty = 0;
 
 function loadLevel(level) {
     let posX = 0;
@@ -157,10 +167,30 @@ function update() {
 
 function spawnEnemies() {
     for (const spawner of spawners) {
-        new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemySprite, 1, player, 3);
+        let spawn = 0;
+        let randomMult = 0;
+        for (const enemy of enemyData) {
+            if (difficulty >= enemy.minDifficulty) {
+                randomMult += enemy.spawnChance;
+            }
+        }
+        let randomEnemy = Math.random() * randomMult;
+        for (let i = 0; i < enemyData.length; i++) {
+            const enemy = enemyData[i]
+            if (randomEnemy <= enemy.spawnChance) {
+                spawn = i;
+                break;
+            }
+            else {
+                randomEnemy -= enemy.spawnChance;
+            }
+        }
+        const enemy = enemyData[spawn];
+        new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health);
     }
 
-    setTimeout(spawnEnemies, 10000)
+    difficulty++;
+    setTimeout(spawnEnemies, Math.max(10000 - difficulty * 100, 5000))
 }
 
 function checkProjectileWallCollision() {
