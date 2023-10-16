@@ -1,6 +1,7 @@
 import { Object, objects } from "./modules/object.js";
-import { Enemy } from "./modules/enemy.js";
+import { RangedEnemy, Enemy } from "./modules/enemy.js";
 import { Player } from "./modules/player.js";
+import { Projectile, projectiles } from "./modules/projectile.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -17,6 +18,9 @@ snailSprite.src = "gfx/slugflora.png";
 const catSprite = new Image();
 catSprite.src = "gfx/sparkit.png";
 
+const shellSprite = new Image();
+shellSprite.src = "gfx/goldshell.png";
+
 const tileWidth = 32;
 const tileHeight = 32;
 
@@ -29,6 +33,8 @@ wallSprite3.src = "gfx/wall3.png";
 
 const projectileImage = new Image();
 projectileImage.src = "gfx/fireball.png";
+const blueFireballSprite = new Image();
+blueFireballSprite.src = "gfx/fireball_blue.png"
 
 const level = [
     "####################################",
@@ -69,9 +75,10 @@ const spawners = [
 ]
 
 const enemyData = [
-    {sprite: butterflySprite, speed: 1, health: 5, minDifficulty: 0, spawnChance: 10},
-    {sprite: snailSprite, speed: 0.5, health: 20, minDifficulty: 5, spawnChance: 1},
-    {sprite: catSprite, speed: 3, health: 2, minDifficulty: 10, spawnChance: 1}
+    {sprite: butterflySprite, speed: 1, health: 5, range: 0, minDifficulty: 0, spawnChance: 10},
+    {sprite: snailSprite, speed: 0.5, health: 20, range: 0, minDifficulty: 5, spawnChance: 1},
+    {sprite: shellSprite, speed: 1, health: 5, range: 160, projectile: blueFireballSprite, projectileSpeed: 3, attackDelay: 2000, minDifficulty: 10, spawnChance: 5},
+    {sprite: catSprite, speed: 3, health: 2, range: 0, minDifficulty: 20, spawnChance: 1}
 ]
 
 const player = new Player("player", 560, 432, 32, 32, playerSprite, 2);
@@ -111,8 +118,6 @@ function loadLevel(level) {
     }
 }
 
-const projectiles = [];
-
 function checkCollision(obj1, obj2) {
     return (
         obj1.x + obj1.width > obj2.x + 6 &&
@@ -147,7 +152,7 @@ function update() {
 
     for (const projectile of projectiles) {
         for (const object of objects) {
-            if (object.tag === "enemy" && checkCollision(projectile, object)) {
+            if (object.tag === "enemy" && projectile.tag === "player" && checkCollision(projectile, object)) {
                 object.health -= player.damage
                 if (object.health <= 0) {
                     const enemyIndex = objects.indexOf(object);
@@ -163,7 +168,7 @@ function update() {
         }
 
         projectile.update();
-        projectile.draw();
+        projectile.draw(ctx, camera);
     }
     checkProjectileWallCollision();
     window.requestAnimationFrame(update);
@@ -190,7 +195,13 @@ function spawnEnemies() {
             }
         }
         const enemy = enemyData[spawn];
-        new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health);
+
+        if (enemy.range > 0) {
+            new RangedEnemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health, enemy.range, enemy.projectile, enemy.projectileSpeed, enemy.attackDelay);
+        }
+        else {
+            new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health);
+        }
     }
 
     difficulty++;
@@ -217,33 +228,6 @@ function checkProjectileWallCollision() {
                 break;
             }
         }
-    }
-}
-
-class Projectile {
-    constructor(startX, startY, width, height, velocity, image) {
-        this.startX = startX;
-        this.startY = startY;
-        this.x = startX;
-        this.y = startY;
-        this.width = width;
-        this.height = height;
-        this.velocity = velocity;
-        this.image = image;
-    }
-
-    update() {
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
-    }
-
-    draw() {
-        ctx.save();
-        ctx.translate(this.x - camera.x, this.y - camera.y);
-        const angle = Math.atan2(this.velocity.y, this.velocity.x);
-        ctx.rotate(angle);
-        ctx.drawImage(this.image, -this.width / 2, -this.height / 2, this.width, this.height);
-        ctx.restore();
     }
 }
 
@@ -283,7 +267,7 @@ canvas.addEventListener("mousedown", (event) => {
         const startY = player.y + player.height / 2;
         const width = 25;
         const height = 14;
-        const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
+        const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileImage);
         projectiles.push(projectile);
 
         shootingInterval = setInterval(() => {
@@ -306,7 +290,7 @@ canvas.addEventListener("mousedown", (event) => {
                 const startY = player.y + player.height / 2;
                 const width = 25;
                 const height = 14;
-                const projectile = new Projectile(startX, startY, width, height, velocity, projectileImage);
+                const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileImage);
                 projectiles.push(projectile);
             }
         }, 150);
