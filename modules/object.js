@@ -17,7 +17,7 @@ class Object {
     }
 
     draw(ctx, camera) {
-        ctx.drawImage(this.sprite, this.x - camera.x, this.y - camera.y);
+        ctx.drawImage(this.sprite, Math.round(this.x - camera.x), Math.round(this.y - camera.y));
     }
 }
 

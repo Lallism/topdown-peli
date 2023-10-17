@@ -6,6 +6,8 @@ import { Projectile, projectiles } from "./modules/projectile.js";
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+let lastTime = 0;
+
 const playerSprite = new Image();
 playerSprite.src = "gfx/drake_emerald.png";
 
@@ -75,13 +77,13 @@ const spawners = [
 ]
 
 const enemyData = [
-    {sprite: butterflySprite, speed: 1, health: 5, range: 0, minDifficulty: 0, spawnChance: 10, score: 1},
-    {sprite: snailSprite, speed: 0.5, health: 20, range: 0, minDifficulty: 5, spawnChance: 1, score: 2},
-    {sprite: shellSprite, speed: 1, health: 10, range: 160, projectile: blueFireballSprite, projectileSpeed: 3, attackDelay: 1500, minDifficulty: 10, spawnChance: 5, score: 3},
-    {sprite: catSprite, speed: 3, health: 2, range: 0, minDifficulty: 20, spawnChance: 1, score: 4}
+    {sprite: butterflySprite, speed: 1.5, health: 5, range: 0, minDifficulty: 0, spawnChance: 10, score: 1},
+    {sprite: snailSprite, speed: 0.8, health: 20, range: 0, minDifficulty: 5, spawnChance: 1, score: 2},
+    {sprite: shellSprite, speed: 1.5, health: 10, range: 160, projectile: blueFireballSprite, projectileSpeed: 5, attackDelay: 1500, minDifficulty: 10, spawnChance: 5, score: 3},
+    {sprite: catSprite, speed: 4, health: 1, range: 0, minDifficulty: 20, spawnChance: 1, score: 4}
 ]
 
-const player = new Player("player", 560, 432, 32, 32, playerSprite, 2);
+const player = new Player("player", 560, 432, 32, 32, playerSprite, 3);
 
 const barX = 15;
 const barY = 15;
@@ -134,9 +136,13 @@ function checkCollision(obj1, obj2) {
 }
 
 function update() {
+    const currTime = new Date().getTime();
+    const deltaTime = (currTime - lastTime) / 10;
+    lastTime = currTime;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    cameraFollow(player); 
+    cameraFollow(player);
 
     for (const object of objects) {
         if (object.tag === "enemy") {
@@ -154,7 +160,7 @@ function update() {
         }
 
         object.draw(ctx, camera);
-        object.update();
+        object.update(deltaTime);
     }
 
     for (const projectile of projectiles) {
@@ -186,7 +192,7 @@ function update() {
             }
         }
 
-        projectile.update();
+        projectile.update(deltaTime);
         projectile.draw(ctx, camera);
     }
 
@@ -210,6 +216,7 @@ function update() {
     ctx.fillText('Score: ' + playerScore, canvas.width - 100, 30);   
 
     checkProjectileWallCollision();
+    
     window.requestAnimationFrame(update);
 }
 
@@ -300,7 +307,7 @@ canvas.addEventListener("mousedown", (event) => {
             y: deltaY / magnitude,
         };
 
-        const speed = 5;
+        const speed = 8;
         const velocity = {
             x: normalizedDirection.x * speed,
             y: normalizedDirection.y * speed,
@@ -323,7 +330,7 @@ canvas.addEventListener("mousedown", (event) => {
                     y: deltaY / magnitude,
                 };
 
-                const speed = 5;
+                const speed = 8;
                 const velocity = {
                     x: normalizedDirection.x * speed,
                     y: normalizedDirection.y * speed,

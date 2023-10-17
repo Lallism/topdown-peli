@@ -42,18 +42,18 @@ class Player extends Object {
         });
     }
 
-    update() {
-        this.movePlayer();
+    update(deltaTime) {
+        this.movePlayer(deltaTime);
     }
 
-    movePlayer() {
+    movePlayer(deltaTime) {
         let playerTop = this.y;
         let playerBottom = this.y + this.height;
         let playerLeft = this.x;
         let playerRight = this.x + this.width;
     
-        let movX = this.movR - this.movL;
-        let movY = this.movD - this.movU;
+        let movX = (this.movR - this.movL) * deltaTime;
+        let movY = (this.movD - this.movU) * deltaTime;
         const length = objects.length;
         for (let i = 0; i < length; i++) {
             const object = objects[i];
