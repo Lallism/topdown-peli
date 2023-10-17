@@ -147,101 +147,105 @@ function checkCollision(obj1, obj2) {
     );
 }
 
+let gameOver = false;
+
 function update() {
-    const currTime = new Date().getTime();
-    const deltaTime = Math.min((currTime - lastTime) / 10, 5);
-    lastTime = currTime;
+    if (!gameOver) {
+        const currTime = new Date().getTime();
+        const deltaTime = Math.min((currTime - lastTime) / 10, 5);
+        lastTime = currTime;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    cameraFollow(player);
+        cameraFollow(player);
 
-    for (const object of objects) {
-        if (object.tag === "enemy") {
-            if (checkCollision(player, object)) {
-                player.health -= object.damage
-                const enemyIndex = objects.indexOf(object);
-                if (enemyIndex !== -1) {
-                    object.health = 0;
-                    objects.splice(enemyIndex, 1);
-                }
-                if (player.health <= 0) {
-                    die();
-                }                
-            }
-        }
-        else if (object.tag === "attackPowerUp" || object.tag === "healthPowerUp")
-            if (checkCollision(player, object)) {
-                object.collected();
-        }
-
-        object.draw(ctx, camera);
-        object.update(deltaTime);
-    }
-
-    for (const projectile of projectiles) {
         for (const object of objects) {
-            if (object.tag === "enemy" && projectile.tag === "player" && checkCollision(projectile, object)) {
-                object.health -= projectile.damage;
-                if (object.health <= 0) {
+            if (object.tag === "enemy") {
+                if (checkCollision(player, object)) {
+                    player.health -= object.damage
                     const enemyIndex = objects.indexOf(object);
                     if (enemyIndex !== -1) {
+                        object.health = 0;
                         objects.splice(enemyIndex, 1);
-                        playerScore += object.score
-                        if (Math.random() < 0.1) {
-                            const powerUp = new AttackPowerUp(object.x, object.y, 32, 32, attackUp, player);
-                            objects.push(powerUp);
-                        }
-                        else if (Math.random() < 0.1) {
-                            const powerUp = new HealthPowerUp(object.x, object.y, 32, 32, healthUp, player);
-                            objects.push(powerUp);
-                        }
                     }
+                    if (player.health <= 0) {
+                        die();
+                    }                
                 }
-                const projectileIndex = projectiles.indexOf(projectile);
-                if (projectileIndex !== -1) {
-                    projectiles.splice(projectileIndex, 1);
-                }
+            }
+            else if (object.tag === "attackPowerUp" || object.tag === "healthPowerUp")
+                if (checkCollision(player, object)) {
+                    object.collected();
             }
 
-            if (object.tag === "player" && projectile.tag === "enemy" && checkCollision(projectile, object)) {
-                player.health -= projectile.damage;
-                if (player.health <= 0) {
-                    die();
-                }
-                const projectileIndex = projectiles.indexOf(projectile);
-                if (projectileIndex !== -1) {
-                    projectiles.splice(projectileIndex, 1);
-                }
-            }
+            object.draw(ctx, camera);
+            object.update(deltaTime);
         }
 
-        projectile.update(deltaTime);
-        projectile.draw(ctx, camera);
+        for (const projectile of projectiles) {
+            for (const object of objects) {
+                if (object.tag === "enemy" && projectile.tag === "player" && checkCollision(projectile, object)) {
+                    object.health -= projectile.damage;
+                    if (object.health <= 0) {
+                        const enemyIndex = objects.indexOf(object);
+                        if (enemyIndex !== -1) {
+                            objects.splice(enemyIndex, 1);
+                            playerScore += object.score
+                            if (Math.random() < 0.1) {
+                                const powerUp = new AttackPowerUp(object.x, object.y, 32, 32, attackUp, player);
+                                objects.push(powerUp);
+                            }
+                            else if (Math.random() < 0.1) {
+                                const powerUp = new HealthPowerUp(object.x, object.y, 32, 32, healthUp, player);
+                                objects.push(powerUp);
+                            }
+                        }
+                    }
+                    const projectileIndex = projectiles.indexOf(projectile);
+                    if (projectileIndex !== -1) {
+                        projectiles.splice(projectileIndex, 1);
+                    }
+                }
+
+                if (object.tag === "player" && projectile.tag === "enemy" && checkCollision(projectile, object)) {
+                    player.health -= projectile.damage;
+                    if (player.health <= 0) {
+                        die();
+                    }
+                    const projectileIndex = projectiles.indexOf(projectile);
+                    if (projectileIndex !== -1) {
+                        projectiles.splice(projectileIndex, 1);
+                    }
+                }
+            }
+
+            projectile.update(deltaTime);
+            projectile.draw(ctx, camera);
+        }
+
+        const gradient = ctx.createLinearGradient(barX, barY, barX + healthBarWidth, barY);
+        gradient.addColorStop(0, "#ffffff");
+        gradient.addColorStop(1, 'red');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(barX, barY, healthBarWidth, barHeight);
+
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(barX - 1, barY - 1, healthBarWidth + 2, barHeight + 2);
+
+        if (player.health >= 0) {
+            healthBarWidth = (player.health * 10) * player.maxHealth;
+        }
+        
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.fillText('Score: ' + playerScore, canvas.width - 100, 30);   
+
+        checkProjectileWallCollision();
+        
+        window.requestAnimationFrame(update);
     }
-
-    const gradient = ctx.createLinearGradient(barX, barY, barX + healthBarWidth, barY);
-    gradient.addColorStop(0, "#ffffff");
-    gradient.addColorStop(1, 'red');
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(barX, barY, healthBarWidth, barHeight);
-
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(barX - 1, barY - 1, healthBarWidth + 2, barHeight + 2);
-
-    if (player.health >= 0) {
-        healthBarWidth = (player.health * 10) * player.maxHealth;
-    }
-    
-    ctx.fillStyle = 'white';
-    ctx.font = '20px Arial';
-    ctx.fillText('Score: ' + playerScore, canvas.width - 100, 30);   
-
-    checkProjectileWallCollision();
-    
-    window.requestAnimationFrame(update);
 }
 
 function spawnEnemies() {
@@ -303,8 +307,17 @@ function checkProjectileWallCollision() {
 }
 
 function die() {
-    console.log("player is dead") // Väliaikainen testi, pelin loppu...
+    gameOver = true;
+    const endgameScreen = document.getElementById("endgame-screen");
+    const scoreDisplay = document.getElementById("score-display");
+    scoreDisplay.textContent = playerScore;
+    endgameScreen.style.display = "block";
 }
+
+const restartButton = document.getElementById("restart-button");
+restartButton.addEventListener("click", () => {
+  location.reload();
+});
 
 function cameraFollow(target) {
     camera.x = target.x + target.width / 2 - canvas.width / 2;
