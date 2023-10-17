@@ -25,7 +25,7 @@ class AttackPowerUp extends Object {
     constructor(x, y, width, height, sprite, player) {
         super("attackPowerUp", x, y, width, height, sprite);
         this.player = player
-        this.timer = 3000;
+        this.timer = 1000;
     }
 
     collected() {
@@ -36,8 +36,8 @@ class AttackPowerUp extends Object {
         }
     }
 
-    update() {
-        this.timer -= 5;
+    update(deltaTime) {
+        this.timer -= deltaTime;
         if (this.timer <= 0) {
             const powerUpIndex = objects.indexOf(this);
             if (powerUpIndex !== -1) {
@@ -51,7 +51,7 @@ class HealthPowerUp extends Object {
     constructor(x, y, width, height, sprite, player) {
         super("healthPowerUp", x, y, width, height, sprite);
         this.player = player
-        this.timer = 3000;
+        this.timer = 1000;
     }
 
     collected() {
@@ -63,8 +63,8 @@ class HealthPowerUp extends Object {
         }
     }
 
-    update() {
-        this.timer -= 5;
+    update(deltaTime) {
+        this.timer -= deltaTime;
         if (this.timer <= 0) {
             const powerUpIndex = objects.indexOf(this);
             if (powerUpIndex !== -1) {
