@@ -14,9 +14,9 @@ class Projectile {
         this.damage = damage;
     }
 
-    update() {
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
+    update(deltaTime) {
+        this.x += this.velocity.x * deltaTime;
+        this.y += this.velocity.y * deltaTime;
     }
 
     draw(ctx, camera) {

@@ -11,7 +11,7 @@ class Enemy extends Object {
         this.score = score
     }
 
-    update() {
+    update(deltaTime) {
         const deltaX = this.target.x - this.x;
         const deltaY = this.target.y - this.y;
         const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -30,8 +30,8 @@ class Enemy extends Object {
         let enemyLeft = this.x;
         let enemyRight = this.x + this.width;
     
-        let movX = velocity.x;
-        let movY = velocity.y;
+        let movX = velocity.x * deltaTime;
+        let movY = velocity.y * deltaTime;
         const length = objects.length;
         for (let i = 0; i < length; i++) {
             const object = objects[i];
@@ -94,7 +94,7 @@ class RangedEnemy extends Enemy {
         this.score = score
     }
 
-    update() {
+    update(deltaTime) {
         const deltaX = this.target.x - this.x;
         const deltaY = this.target.y - this.y;
         const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -122,8 +122,8 @@ class RangedEnemy extends Enemy {
         let enemyLeft = this.x;
         let enemyRight = this.x + this.width;
     
-        let movX = velocity.x;
-        let movY = velocity.y;
+        let movX = velocity.x * deltaTime;
+        let movY = velocity.y * deltaTime;
         const length = objects.length;
         for (let i = 0; i < length; i++) {
             const object = objects[i];
