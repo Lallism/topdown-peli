@@ -137,7 +137,7 @@ function checkCollision(obj1, obj2) {
 
 function update() {
     const currTime = new Date().getTime();
-    const deltaTime = (currTime - lastTime) / 10;
+    const deltaTime = Math.min((currTime - lastTime) / 10, 5);
     lastTime = currTime;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
