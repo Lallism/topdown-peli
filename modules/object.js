@@ -55,7 +55,8 @@ class HealthPowerUp extends Object {
     }
 
     collected() {
-        this.player.health += 0.5;
+        if (this.player.health < this.player.maxHealth)
+            this.player.health += 0.5;
         const powerUpIndex = objects.indexOf(this);
         if (powerUpIndex !== -1) {
             objects.splice(powerUpIndex, 1);
