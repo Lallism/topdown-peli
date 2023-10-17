@@ -77,10 +77,10 @@ const spawners = [
 ]
 
 const enemyData = [
-    {sprite: butterflySprite, speed: 1.5, health: 5, range: 0, minDifficulty: 0, spawnChance: 10, score: 1},
-    {sprite: snailSprite, speed: 0.8, health: 20, range: 0, minDifficulty: 5, spawnChance: 1, score: 2},
-    {sprite: shellSprite, speed: 1.5, health: 10, range: 160, projectile: blueFireballSprite, projectileSpeed: 5, attackDelay: 1500, minDifficulty: 10, spawnChance: 5, score: 3},
-    {sprite: catSprite, speed: 4, health: 1, range: 0, minDifficulty: 20, spawnChance: 1, score: 4}
+    {sprite: butterflySprite, speed: 1.5, health: 5, healthScaling: 0.1, range: 0, minDifficulty: 0, spawnChance: 10, score: 1},
+    {sprite: snailSprite, speed: 0.8, health: 10, healthScaling: 1, range: 0, minDifficulty: 5, spawnChance: 1, score: 2},
+    {sprite: shellSprite, speed: 1.5, health: 10, healthScaling: 0.2, range: 160, projectile: blueFireballSprite, projectileSpeed: 5, attackDelay: 1500, minDifficulty: 10, spawnChance: 5, score: 3},
+    {sprite: catSprite, speed: 4, health: 1, healthScaling: 0, range: 0, minDifficulty: 20, spawnChance: 1, score: 4}
 ]
 
 const player = new Player("player", 560, 432, 32, 32, playerSprite, 3);
@@ -241,17 +241,18 @@ function spawnEnemies() {
             }
         }
         const enemy = enemyData[spawn];
+        const enemyHealth = enemy.health + Math.floor(enemy.healthScaling * difficulty);
 
         if (enemy.range > 0) {
-            new RangedEnemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health, enemy.range, enemy.projectile, enemy.projectileSpeed, enemy.attackDelay, enemy.score);
+            new RangedEnemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemyHealth, enemy.range, enemy.projectile, enemy.projectileSpeed, enemy.attackDelay, enemy.score);
         }
         else {
-            new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemy.health, enemy.score);
+            new Enemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemyHealth, enemy.score);
         }
     }
 
     difficulty++;
-    setTimeout(spawnEnemies, Math.max(10000 - difficulty * 100, 5000))
+    setTimeout(spawnEnemies, Math.max(10000 - difficulty * 100, 3000))
 }
 
 function checkProjectileWallCollision() {
