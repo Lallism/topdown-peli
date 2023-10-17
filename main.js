@@ -39,10 +39,14 @@ wallSprite2.src = "gfx/wall2.png";
 const wallSprite3 = new Image();
 wallSprite3.src = "gfx/wall3.png";
 
+const smallFireballSprite = new Image();
+smallFireballSprite.src = "gfx/fireball_s.png";
 const fireballSprite = new Image();
 fireballSprite.src = "gfx/fireball.png";
 const largeFireballSprite = new Image();
 largeFireballSprite.src = "gfx/fireball_large.png";
+const xLargeFireballSprite = new Image();
+xLargeFireballSprite.src = "gfx/fireball_xlarge.png";
 const blueFireballSprite = new Image();
 blueFireballSprite.src = "gfx/fireball_blue.png";
 
@@ -317,13 +321,23 @@ let targetX, targetY;
 
 canvas.addEventListener("mousedown", (event) => {
     if (event.button === 0) {
-        let projectileSprite = fireballSprite;
-        let width = 25;
-        let height = 14;
-        if (player.damage > 5) {
+        let projectileSprite = smallFireballSprite;
+        let width = 18;
+        let height = 10;
+        if (player.damage > 10) {
+            projectileSprite = xLargeFireballSprite;
+            width = 32;
+            height = 24;
+        }
+        else if (player.damage > 6) {
             projectileSprite = largeFireballSprite;
             width = 32;
             height = 18;
+        }
+        else if (player.damage > 3) {
+            projectileSprite = fireballSprite;
+            width = 25;
+            height = 14;
         }
 
         canShoot = true;
@@ -337,7 +351,7 @@ canvas.addEventListener("mousedown", (event) => {
             y: deltaY / magnitude,
         };
 
-        const speed = 8;
+        const speed = 6;
         const velocity = {
             x: normalizedDirection.x * speed,
             y: normalizedDirection.y * speed,
@@ -350,6 +364,22 @@ canvas.addEventListener("mousedown", (event) => {
 
         shootingInterval = setInterval(() => {
             if (canShoot) {
+                if (player.damage > 10) {
+                    projectileSprite = xLargeFireballSprite;
+                    width = 32;
+                    height = 24;
+                }
+                else if (player.damage > 6) {
+                    projectileSprite = largeFireballSprite;
+                    width = 32;
+                    height = 18;
+                }
+                else if (player.damage > 3) {
+                    projectileSprite = fireballSprite;
+                    width = 25;
+                    height = 14;
+                }
+
                 const deltaX = targetX - (player.x + player.width / 2);
                 const deltaY = targetY - (player.y + player.height / 2);
                 const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -358,7 +388,7 @@ canvas.addEventListener("mousedown", (event) => {
                     y: deltaY / magnitude,
                 };
 
-                const speed = 8;
+                const speed = 6;
                 const velocity = {
                     x: normalizedDirection.x * speed,
                     y: normalizedDirection.y * speed,
