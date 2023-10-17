@@ -144,6 +144,7 @@ function update() {
                 player.health -= object.damage
                 const enemyIndex = objects.indexOf(object);
                 if (enemyIndex !== -1) {
+                    object.health = 0;
                     objects.splice(enemyIndex, 1);
                 }
                 if (player.health <= 0) {
