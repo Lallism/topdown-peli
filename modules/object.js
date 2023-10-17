@@ -47,4 +47,30 @@ class AttackPowerUp extends Object {
     }
 }
 
-export { Object, objects, AttackPowerUp };
+class HealthPowerUp extends Object {
+    constructor(x, y, width, height, sprite, player) {
+        super("healthPowerUp", x, y, width, height, sprite);
+        this.player = player
+        this.timer = 3000;
+    }
+
+    collected() {
+        this.player.health += 0.5;
+        const powerUpIndex = objects.indexOf(this);
+        if (powerUpIndex !== -1) {
+            objects.splice(powerUpIndex, 1);
+        }
+    }
+
+    update() {
+        this.timer -= 5;
+        if (this.timer <= 0) {
+            const powerUpIndex = objects.indexOf(this);
+            if (powerUpIndex !== -1) {
+                objects.splice(powerUpIndex, 1);
+            }
+        }
+    }
+}
+
+export { Object, objects, AttackPowerUp, HealthPowerUp };

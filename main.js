@@ -1,4 +1,4 @@
-import { Object, objects, AttackPowerUp } from "./modules/object.js";
+import { Object, objects, AttackPowerUp, HealthPowerUp } from "./modules/object.js";
 import { RangedEnemy, Enemy } from "./modules/enemy.js";
 import { Player } from "./modules/player.js";
 import { Projectile, projectiles } from "./modules/projectile.js";
@@ -25,6 +25,10 @@ shellSprite.src = "gfx/goldshell.png";
 
 const attackUp = new Image()
 attackUp.src = "gfx/attack_up.png"
+
+const healthUp = new Image()
+healthUp.src = "gfx/health_up.png"
+
 
 const tileWidth = 32;
 const tileHeight = 32;
@@ -161,7 +165,7 @@ function update() {
                 }                
             }
         }
-        else if (object.tag === "attackPowerUp")
+        else if (object.tag === "attackPowerUp" || object.tag === "healthPowerUp")
             if (checkCollision(player, object)) {
                 object.collected();
         }
@@ -179,8 +183,12 @@ function update() {
                     if (enemyIndex !== -1) {
                         objects.splice(enemyIndex, 1);
                         playerScore += object.score
-                        if (Math.random() < 0.2) {
+                        if (Math.random() < 0.1) {
                             const powerUp = new AttackPowerUp(object.x, object.y, 32, 32, attackUp, player);
+                            objects.push(powerUp);
+                        }
+                        else if (Math.random() < 0.1) {
+                            const powerUp = new HealthPowerUp(object.x, object.y, 32, 32, healthUp, player);
                             objects.push(powerUp);
                         }
                     }
