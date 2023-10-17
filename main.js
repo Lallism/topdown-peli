@@ -29,7 +29,6 @@ attackUp.src = "gfx/attack_up.png"
 const healthUp = new Image()
 healthUp.src = "gfx/health_up.png"
 
-
 const tileWidth = 32;
 const tileHeight = 32;
 
@@ -40,10 +39,12 @@ wallSprite2.src = "gfx/wall2.png";
 const wallSprite3 = new Image();
 wallSprite3.src = "gfx/wall3.png";
 
-const projectileImage = new Image();
-projectileImage.src = "gfx/fireball.png";
+const fireballSprite = new Image();
+fireballSprite.src = "gfx/fireball.png";
+const largeFireballSprite = new Image();
+largeFireballSprite.src = "gfx/fireball_large.png";
 const blueFireballSprite = new Image();
-blueFireballSprite.src = "gfx/fireball_blue.png"
+blueFireballSprite.src = "gfx/fireball_blue.png";
 
 const level = [
     "####################################",
@@ -316,6 +317,15 @@ let targetX, targetY;
 
 canvas.addEventListener("mousedown", (event) => {
     if (event.button === 0) {
+        let projectileSprite = fireballSprite;
+        let width = 25;
+        let height = 14;
+        if (player.damage > 5) {
+            projectileSprite = largeFireballSprite;
+            width = 32;
+            height = 18;
+        }
+
         canShoot = true;
         updateTarget(event);
 
@@ -335,9 +345,7 @@ canvas.addEventListener("mousedown", (event) => {
 
         const startX = player.x + player.width / 2;
         const startY = player.y + player.height / 2;
-        const width = 25;
-        const height = 14;
-        const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileImage, player.damage);
+        const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileSprite, player.damage);
         projectiles.push(projectile);
 
         shootingInterval = setInterval(() => {
@@ -358,9 +366,7 @@ canvas.addEventListener("mousedown", (event) => {
 
                 const startX = player.x + player.width / 2;
                 const startY = player.y + player.height / 2;
-                const width = 25;
-                const height = 14;
-                const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileImage, player.damage);
+                const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileSprite, player.damage);
                 projectiles.push(projectile);
             }
         }, 150);
