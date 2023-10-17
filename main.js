@@ -1,4 +1,4 @@
-import { Object, objects } from "./modules/object.js";
+import { Object, objects, AttackPowerUp } from "./modules/object.js";
 import { RangedEnemy, Enemy } from "./modules/enemy.js";
 import { Player } from "./modules/player.js";
 import { Projectile, projectiles } from "./modules/projectile.js";
@@ -22,6 +22,9 @@ catSprite.src = "gfx/sparkit.png";
 
 const shellSprite = new Image();
 shellSprite.src = "gfx/goldshell.png";
+
+const attackUp = new Image()
+attackUp.src = "gfx/attack_up.png"
 
 const tileWidth = 32;
 const tileHeight = 32;
@@ -158,6 +161,10 @@ function update() {
                 }                
             }
         }
+        else if (object.tag === "attackPowerUp")
+            if (checkCollision(player, object)) {
+                object.collected();
+        }
 
         object.draw(ctx, camera);
         object.update(deltaTime);
@@ -172,6 +179,10 @@ function update() {
                     if (enemyIndex !== -1) {
                         objects.splice(enemyIndex, 1);
                         playerScore += object.score
+                        if (Math.random() < 0.2) {
+                            const powerUp = new AttackPowerUp(object.x, object.y, 32, 32, attackUp, player);
+                            objects.push(powerUp);
+                        }
                     }
                 }
                 const projectileIndex = projectiles.indexOf(projectile);

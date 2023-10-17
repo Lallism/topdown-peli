@@ -21,4 +21,30 @@ class Object {
     }
 }
 
-export { Object, objects };
+class AttackPowerUp extends Object {
+    constructor(x, y, width, height, sprite, player) {
+        super("attackPowerUp", x, y, width, height, sprite);
+        this.player = player
+        this.timer = 3000;
+    }
+
+    collected() {
+        this.player.damage += 0.5;
+        const powerUpIndex = objects.indexOf(this);
+        if (powerUpIndex !== -1) {
+            objects.splice(powerUpIndex, 1);
+        }
+    }
+
+    update() {
+        this.timer -= 5;
+        if (this.timer <= 0) {
+            const powerUpIndex = objects.indexOf(this);
+            if (powerUpIndex !== -1) {
+                objects.splice(powerUpIndex, 1);
+            }
+        }
+    }
+}
+
+export { Object, objects, AttackPowerUp };
