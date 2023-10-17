@@ -1,7 +1,7 @@
 const projectiles = [];
 
 class Projectile {
-    constructor(tag, startX, startY, width, height, velocity, image) {
+    constructor(tag, startX, startY, width, height, velocity, image, damage) {
         this.tag = tag;
         this.startX = startX;
         this.startY = startY;
@@ -11,6 +11,7 @@ class Projectile {
         this.height = height;
         this.velocity = velocity;
         this.image = image;
+        this.damage = damage;
     }
 
     update() {

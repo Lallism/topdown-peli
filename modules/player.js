@@ -8,9 +8,9 @@ class Player extends Object {
         this.movU = 0;
         this.movD = 0;
         this.speed = speed;
-        this.damage = 1
-        this.health = 5
-        this.maxHealth = 5
+        this.damage = 1;
+        this.health = 5;
+        this.maxHealth = 5;
 
         document.addEventListener("keydown", (e) => {
             if (e.key === "ArrowRight" || e.key === "Right") {

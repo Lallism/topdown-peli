@@ -77,7 +77,7 @@ const spawners = [
 const enemyData = [
     {sprite: butterflySprite, speed: 1, health: 5, range: 0, minDifficulty: 0, spawnChance: 10, score: 1},
     {sprite: snailSprite, speed: 0.5, health: 20, range: 0, minDifficulty: 5, spawnChance: 1, score: 2},
-    {sprite: shellSprite, speed: 1, health: 5, range: 160, projectile: blueFireballSprite, projectileSpeed: 3, attackDelay: 2000, minDifficulty: 10, spawnChance: 5, score: 3},
+    {sprite: shellSprite, speed: 1, health: 10, range: 160, projectile: blueFireballSprite, projectileSpeed: 3, attackDelay: 1500, minDifficulty: 10, spawnChance: 5, score: 3},
     {sprite: catSprite, speed: 3, health: 2, range: 0, minDifficulty: 20, spawnChance: 1, score: 4}
 ]
 
@@ -147,7 +147,7 @@ function update() {
                     objects.splice(enemyIndex, 1);
                 }
                 if (player.health <= 0) {
-                    console.log("player is dead") // Väliaikainen testi, pelin loppu...
+                    die();
                 }                
             }
         }
@@ -159,13 +159,24 @@ function update() {
     for (const projectile of projectiles) {
         for (const object of objects) {
             if (object.tag === "enemy" && projectile.tag === "player" && checkCollision(projectile, object)) {
-                object.health -= player.damage
+                object.health -= projectile.damage;
                 if (object.health <= 0) {
                     const enemyIndex = objects.indexOf(object);
                     if (enemyIndex !== -1) {
                         objects.splice(enemyIndex, 1);
                         playerScore += object.score
                     }
+                }
+                const projectileIndex = projectiles.indexOf(projectile);
+                if (projectileIndex !== -1) {
+                    projectiles.splice(projectileIndex, 1);
+                }
+            }
+
+            if (object.tag === "player" && projectile.tag === "enemy" && checkCollision(projectile, object)) {
+                player.health -= projectile.damage;
+                if (player.health <= 0) {
+                    die();
                 }
                 const projectileIndex = projectiles.indexOf(projectile);
                 if (projectileIndex !== -1) {
@@ -258,6 +269,10 @@ function checkProjectileWallCollision() {
     }
 }
 
+function die() {
+    console.log("player is dead") // Väliaikainen testi, pelin loppu...
+}
+
 function cameraFollow(target) {
     camera.x = target.x + target.width / 2 - canvas.width / 2;
     camera.y = target.y + target.width / 2 - canvas.height / 2;
@@ -294,7 +309,7 @@ canvas.addEventListener("mousedown", (event) => {
         const startY = player.y + player.height / 2;
         const width = 25;
         const height = 14;
-        const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileImage);
+        const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileImage, player.damage);
         projectiles.push(projectile);
 
         shootingInterval = setInterval(() => {
@@ -317,7 +332,7 @@ canvas.addEventListener("mousedown", (event) => {
                 const startY = player.y + player.height / 2;
                 const width = 25;
                 const height = 14;
-                const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileImage);
+                const projectile = new Projectile("player", startX, startY, width, height, velocity, projectileImage, player.damage);
                 projectiles.push(projectile);
             }
         }, 150);

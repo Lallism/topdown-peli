@@ -195,7 +195,7 @@ class RangedEnemy extends Enemy {
         const startY = self.y + self.height / 2;
         const width = 25;
         const height = 14;
-        const projectile = new Projectile("enemy", startX, startY, width, height, velocity, self.projectile);
+        const projectile = new Projectile("enemy", startX, startY, width, height, velocity, self.projectile, self.damage);
         projectiles.push(projectile);
 
         self.canShoot = true;
