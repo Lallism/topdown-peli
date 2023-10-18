@@ -89,9 +89,9 @@ const spawners = [
 ]
 
 const enemyData = [
-    {sprite: butterflySprite, speed: 1.5, health: 5, healthScaling: 0.1, range: 0, minDifficulty: 0, spawnChance: 10, score: 1},
-    {sprite: snailSprite, speed: 0.8, health: 10, healthScaling: 1, range: 0, minDifficulty: 5, spawnChance: 1, score: 2},
-    {sprite: shellSprite, speed: 1.5, health: 10, healthScaling: 0.2, range: 160, projectile: blueFireballSprite, projectileSpeed: 5, attackDelay: 1500, minDifficulty: 10, spawnChance: 5, score: 3},
+    {sprite: butterflySprite, speed: 1.5, health: 5, healthScaling: 0.5, range: 0, minDifficulty: 0, spawnChance: 10, score: 1},
+    {sprite: snailSprite, speed: 0.8, health: 20, healthScaling: 5, range: 0, minDifficulty: 5, spawnChance: 1, score: 2},
+    {sprite: shellSprite, speed: 1.5, health: 10, healthScaling: 1, range: 160, projectile: blueFireballSprite, projectileSpeed: 5, attackDelay: 1500, minDifficulty: 10, spawnChance: 5, score: 3},
     {sprite: catSprite, speed: 4, health: 1, healthScaling: 0, range: 0, minDifficulty: 20, spawnChance: 1, score: 4}
 ]
 
@@ -276,7 +276,8 @@ function spawnEnemies() {
             }
         }
         const enemy = enemyData[spawn];
-        const enemyHealth = enemy.health + Math.floor(enemy.healthScaling * difficulty);
+        const totalHealthMultiplier = 1 + 0.02 * difficulty;
+        const enemyHealth = Math.floor((enemy.health + enemy.healthScaling * difficulty) * totalHealthMultiplier);
 
         if (enemy.range > 0) {
             new RangedEnemy("enemy", spawner.x, spawner.y, 32, 32, enemy.sprite, enemy.speed, player, enemyHealth, enemy.range, enemy.projectile, enemy.projectileSpeed, enemy.attackDelay, enemy.score);
@@ -287,7 +288,8 @@ function spawnEnemies() {
     }
 
     difficulty++;
-    setTimeout(spawnEnemies, Math.max(10000 - difficulty * 100, 3000))
+    const spawnDelay = Math.max(200000 / (20 + difficulty), 2000)
+    setTimeout(spawnEnemies, spawnDelay)
 }
 
 function checkProjectileWallCollision() {
