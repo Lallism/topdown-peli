@@ -102,6 +102,7 @@ const barY = 15;
 const barHeight = 10;
 let healthBarWidth = (player.health * 10) * player.maxHealth;
 let playerScore = 0;
+let enemyKills = 0;
 
 const camera = {
     x: 0,
@@ -191,11 +192,12 @@ function update() {
                         if (enemyIndex !== -1) {
                             objects.splice(enemyIndex, 1);
                             playerScore += object.score
-                            if (Math.random() < 0.1) {
+                            enemyKills++
+                            if (Math.random() < 0.1 || enemyKills % 20 == 0) {
                                 const powerUp = new AttackPowerUp(object.x, object.y, 32, 32, attackUp, player);
                                 objects.push(powerUp);
                             }
-                            else if (Math.random() < 0.1) {
+                            else if (Math.random() < 0.1 || enemyKills % 30 == 0) {
                                 const powerUp = new HealthPowerUp(object.x, object.y, 32, 32, healthUp, player);
                                 objects.push(powerUp);
                             }
