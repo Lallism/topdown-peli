@@ -239,8 +239,13 @@ function update() {
         }
         
         ctx.fillStyle = 'white';
-        ctx.font = '20px Arial';
-        ctx.fillText('Score: ' + playerScore, canvas.width - 100, 30);   
+        ctx.font = 'bold 20px Arial';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 3;
+        ctx.strokeText('Score: ' + playerScore, canvas.width - 115, 25);
+        ctx.fillText('Score: ' + playerScore, canvas.width - 115, 25);
+        ctx.strokeText('Wave: ' + difficulty, canvas.width - 360, 25);
+        ctx.fillText('Wave: ' + difficulty, canvas.width - 360, 25);
 
         checkProjectileWallCollision();
         
@@ -310,7 +315,9 @@ function die() {
     gameOver = true;
     const endgameScreen = document.getElementById("endgame-screen");
     const scoreDisplay = document.getElementById("score-display");
+    const waveDisplay = document.getElementById("wave-display");
     scoreDisplay.textContent = playerScore;
+    waveDisplay.textContent = difficulty;
     endgameScreen.style.display = "block";
 }
 

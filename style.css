@@ -47,3 +47,16 @@ p {
     padding-bottom: 15px;
     font-size: 20px;
 }
+
+#restart-button {
+    background: linear-gradient(to top, rgb(169, 2, 2), rgb(119, 30, 30));
+    color: white;
+    padding: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+#restart-button:hover {
+    background: linear-gradient(to top, rgb(144, 2, 2), rgb(86, 1, 1));
+}
