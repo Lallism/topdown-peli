@@ -12,10 +12,12 @@
     <main>
         <canvas id="canvas" width="640" height="480"></canvas>
         <div id="endgame-screen" class="hidden">
-            <h1>Game Over</h1>
-            <p>Wave: <span id="wave-display">0</span></p>
-            <p>Your Score: <span id="score-display">0</span></p>
-            <button id="restart-button">Restart</button>
+            <div id="endgame-gradient">
+                <h1 class="text">Game Over</h1>
+                <p class="text">Wave: <span id="wave-display">0</span></p>
+                <p class="text">Your Score: <span id="score-display">0</span></p>
+                <button id="restart-button">Restart</button>
+            </div>
         </div>
     </main>
     <script src="main.js" type="module"></script>

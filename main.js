@@ -5,6 +5,8 @@ import { Projectile, projectiles } from "./modules/projectile.js";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const font = new FontFace("quicksand", "url(Quicksand-Regular.ttf)")
+document.fonts.add(font);
 
 let lastTime = 0;
 
@@ -241,7 +243,7 @@ function update() {
         }
         
         ctx.fillStyle = 'white';
-        ctx.font = 'bold 20px Arial';
+        ctx.font = 'bold 20px quicksand';
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
         ctx.strokeText('Score: ' + playerScore, canvas.width - 115, 25);
@@ -336,7 +338,14 @@ function cameraFollow(target) {
 }
 
 loadLevel(level);
-update();
+font.load().then(
+    () => {
+        update();
+    },
+    (err) => {
+        console.error(err);
+    }
+)
 setTimeout(spawnEnemies, 5000)
 
 let canShoot = false;
